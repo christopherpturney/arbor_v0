@@ -43,15 +43,17 @@ create trigger create_user_role
 -- Manually sync existing users' roles
 do $$
 declare
-  user_type text;
+  r record;
 begin
-  for user_type in ('designer', 'homeowner') loop
-    insert into public.user_role (user_id, user_role)
+  for r in (
     select 
       id,
-      user_type::user_role_type
-    from auth.users
-    where raw_user_meta_data->>'user_type' = user_type
+      raw_user_meta_data->>'user_type' as user_type
+    from auth.users 
+    where raw_user_meta_data->>'user_type' in ('designer', 'homeowner')
+  ) loop
+    insert into public.user_role (user_id, user_role)
+    values (r.id, r.user_type::user_role_type)
     on conflict (user_id) do update set
       user_role = excluded.user_role,
       updated_at = now();
