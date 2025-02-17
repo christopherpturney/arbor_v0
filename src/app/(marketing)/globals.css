@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair);
+    @apply font-medium tracking-normal;
+  }
+
+  h1 {
+    @apply text-[2.75rem] leading-[1.2];
+  }
+
+  h2 {
+    @apply text-[2rem] leading-[1.3];
+  }
+
+  h3 {
+    @apply text-[1.5rem] leading-[1.4];
+  }
+
+  body {
+    font-family: var(--font-lora);
+    @apply bg-cream text-charcoal text-base leading-relaxed tracking-wide;
+  }
+
+  p {
+    @apply text-[1.125rem] leading-[1.7];
+  }
+}
+
+@layer components {
+  /* Custom Navigation Styles */
+  .nav-link {
+    @apply text-charcoal hover:text-sage transition-colors duration-200 text-[1rem] tracking-wide font-medium bg-transparent !important;
+  }
+
+  .nav-link.active {
+    @apply underline underline-offset-8 decoration-sage;
+  }
+
+  /* DaisyUI Component Customizations */
+  .btn-primary {
+    @apply bg-sage text-cream border-sage hover:bg-cream hover:text-sage hover:border-sage;
+  }
+
+  .btn {
+    @apply font-medium rounded-lg normal-case;
+    --tw-border-opacity: 1;
+    --tw-bg-opacity: 1;
+  }
+
+  .btn-lg {
+    @apply px-8 py-4 text-[1.125rem];
+  }
+
+  .card {
+    @apply rounded-lg border-none;
+  }
+
+  .card-title {
+    @apply font-medium;
+  }
+
+  .stats {
+    @apply rounded-lg bg-base-100;
+  }
+
+  .stat-title {
+    @apply text-charcoal/70;
+  }
+
+  .stat-value {
+    @apply text-sage font-medium;
+  }
+
+  .stat-desc {
+    @apply text-charcoal/60;
+  }
+
+  .steps .step:before {
+    @apply bg-sage/20;
+  }
+
+  .steps .step-primary:before {
+    @apply bg-sage;
+  }
+
+  .steps .step:after {
+    @apply bg-sage/20;
+  }
+
+  .steps .step-primary:after {
+    @apply bg-sage;
+  }
+
+  .link-primary {
+    @apply text-sage hover:text-sage/80;
+  }
+
+  .divider {
+    @apply text-charcoal/40 before:bg-charcoal/10 after:bg-charcoal/10;
+  }
+
+  .hero-overlay {
+    @apply bg-gradient-to-b from-charcoal/60 to-charcoal/40;
+  }
+}
+
+[data-theme="light"] {
+  --primary: #8A9A8B;
+  --primary-content: #FDFBF7;
+  --secondary: #B6A186;
+  --secondary-content: #FDFBF7;
+  --accent: #E8D7D5;
+  --accent-content: #2C3539;
+  --neutral: #2C3539;
+  --neutral-content: #FDFBF7;
+  --base-100: #FDFBF7;
+  --base-200: #F9F6F3;
+  --base-300: #E8D7D5;
+}
+
+/* Hero section styles */
+.hero-container h1 {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-container p {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.hero-btn {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
