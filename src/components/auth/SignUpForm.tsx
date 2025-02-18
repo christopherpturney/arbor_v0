@@ -66,7 +66,18 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
         if (enableEmailConfirmation) {
           router.push('/auth/verify-email');
         } else {
-          // If email confirmation is disabled, user is automatically signed in
+          // If email confirmation is disabled, sign in the user immediately
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (signInError) {
+            throw signInError;
+          }
+
+          // Refresh to update the session
+          router.refresh();
           router.push(`/dashboard/${userType}`);
         }
       } else {
