@@ -29,18 +29,18 @@ export default function AppLayout({ children }: AppLayoutProps) {
       setUser(user);
 
       // Get user role
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_role')
+      const { data: userData, error } = await supabase
+        .from('users')
         .select('user_role')
-        .eq('user_id', user.id)
+        .eq('id', user.id)
         .single();
 
-      if (roleError) {
-        console.error('Error fetching user role:', roleError);
+      if (error) {
+        console.error('Error fetching user role:', error);
         return;
       }
 
-      setUserRole(roleData?.user_role || null);
+      setUserRole(userData?.user_role || null);
     };
 
     checkAuth();

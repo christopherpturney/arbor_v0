@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { AuthError } from '@supabase/supabase-js';
@@ -14,44 +14,30 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClientComponentClient();
+  
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError('');
+  const handleSignUp = async () => {
+    if (!nameRef.current || !emailRef.current || !passwordRef.current) return;
+
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+    const fullName = nameRef.current.value;
+
+    if (!email || !password || !fullName) {
+      setError('All fields are required');
+      return;
+    }
+
+    setError(null);
     setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const fullName = formData.get('name') as string;
-
     try {
-      // Check if user already exists in users table
-      const { data: existingUsers, error: userCheckError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('email', email);
+      console.log('Attempting signup with:', { email, fullName, userType }); // Debug log
 
-      if (userCheckError) {
-        console.error('Error checking existing user:', {
-          error: userCheckError,
-          details: userCheckError.details,
-          hint: userCheckError.hint,
-          code: userCheckError.code
-        });
-        setError('An error occurred during signup. Please try again.');
-        setLoading(false);
-        return;
-      }
-
-      if (existingUsers && existingUsers.length > 0) {
-        setError('This email is already registered. Please log in instead.');
-        setLoading(false);
-        return;
-      }
-
-      // Sign up the user
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -63,33 +49,92 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
         }
       });
 
+      console.log('Signup response:', { authData, error: signUpError }); // Debug log
+
       if (signUpError) {
-        console.error('Signup error:', {
-          error: signUpError,
-          name: signUpError.name,
-          message: signUpError.message,
-          stack: signUpError.stack
-        });
         throw signUpError;
       }
 
-      router.push('/auth/verify-email');
+      if (authData.user) {
+        router.push('/auth/verify-email');
+      } else {
+        throw new Error('No user data returned from signup');
+      }
     } catch (error: unknown) {
-      console.error('Unhandled signup error:', {
-        error,
-        name: error instanceof Error ? error.name : 'Unknown',
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
-      });
-      setError('An error occurred during signup. Please try again.');
+      console.error('Signup error:', error);
+      if (error instanceof AuthError) {
+        setError(error.message);
+      } else {
+        setError('An error occurred during signup. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  return {
-    handleSubmit,
-    loading,
-    error,
-  };
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="alert alert-error">
+          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
+
+      <div className="form-control">
+        <label htmlFor="name" className="label">
+          <span className="label-text">Full Name</span>
+        </label>
+        <input
+          ref={nameRef}
+          type="text"
+          id="name"
+          name="name"
+          className="input input-bordered w-full"
+          required
+          minLength={2}
+        />
+      </div>
+
+      <div className="form-control">
+        <label htmlFor="email" className="label">
+          <span className="label-text">Email</span>
+        </label>
+        <input
+          ref={emailRef}
+          type="email"
+          id="email"
+          name="email"
+          className="input input-bordered w-full"
+          required
+        />
+      </div>
+
+      <div className="form-control">
+        <label htmlFor="password" className="label">
+          <span className="label-text">Password</span>
+        </label>
+        <input
+          ref={passwordRef}
+          type="password"
+          id="password"
+          name="password"
+          className="input input-bordered w-full"
+          required
+          minLength={6}
+        />
+      </div>
+
+      <button 
+        onClick={handleSignUp}
+        type="button"
+        className={`btn btn-primary w-full ${loading ? 'loading' : ''}`}
+        disabled={loading}
+      >
+        {loading ? 'Creating Account...' : 'Create Account'}
+      </button>
+    </div>
+  );
 } 

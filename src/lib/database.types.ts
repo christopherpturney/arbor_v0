@@ -6,7 +6,58 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
+export interface Database {
+  public: {
+    Tables: {
+      users: {
+        Row: {
+          id: string
+          full_name: string | null
+          email: string | null
+          created_at: string
+          updated_at: string | null
+          user_role: Database["public"]["Enums"]["user_role_type"]
+        }
+        Insert: {
+          id: string
+          full_name?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string | null
+          user_role: Database["public"]["Enums"]["user_role_type"]
+        }
+        Update: {
+          id?: string
+          full_name?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string | null
+          user_role?: Database["public"]["Enums"]["user_role_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      user_role_type: "designer" | "homeowner"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -27,78 +78,6 @@ export type Database = {
     }
     Enums: {
       [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-  public: {
-    Tables: {
-      user_role: {
-        Row: {
-          created_at: string
-          id: string
-          updated_at: string
-          user_id: string
-          user_role: Database["public"]["Enums"]["user_role_type"]
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id: string
-          user_role: Database["public"]["Enums"]["user_role_type"]
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string
-          user_role?: Database["public"]["Enums"]["user_role_type"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      users: {
-        Row: {
-          created_at: string
-          email: string
-          full_name: string
-          id: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          full_name: string
-          id: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          full_name?: string
-          id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      user_role_type: "designer" | "homeowner"
     }
     CompositeTypes: {
       [_ in never]: never

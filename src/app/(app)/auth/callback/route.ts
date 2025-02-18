@@ -23,19 +23,24 @@ export async function GET(request: Request) {
         throw new Error('User not found');
       }
 
-      // Get the user's role from the user_role table
-      const { data: userRole } = await supabase
-        .from('user_role')
+      // Get the user's role from the users table
+      const { data: userData, error: roleError } = await supabase
+        .from('users')
         .select('user_role')
-        .eq('user_id', user.id)
+        .eq('id', user.id)
         .single();
 
-      console.log('User role:', userRole); // Debug log
+      if (roleError) {
+        console.error('Error fetching user role:', roleError);
+        return NextResponse.redirect(new URL('/auth', requestUrl.origin));
+      }
+
+      console.log('User role:', userData); // Debug log
 
       // Redirect based on user role
-      if (userRole?.user_role === 'designer') {
+      if (userData?.user_role === 'designer') {
         return NextResponse.redirect(new URL('/dashboard/designer', requestUrl.origin));
-      } else if (userRole?.user_role === 'homeowner') {
+      } else if (userData?.user_role === 'homeowner') {
         return NextResponse.redirect(new URL('/dashboard/homeowner', requestUrl.origin));
       } else {
         console.log('No valid user role found'); // Debug log

@@ -97,18 +97,24 @@ export default function LoginForm({ userType, onSuccess }: LoginFormProps) {
       if (authError) throw authError;
 
       if (authData.user) {
-        // Verify user role
+        // Check if user has correct role
         const { data: roleData, error: roleError } = await supabase
-          .from('user_role')
+          .from('users')
           .select('user_role')
-          .eq('user_id', authData.user.id)
+          .eq('id', authData.user.id)
           .single();
 
-        if (roleError) throw roleError;
+        if (roleError) {
+          console.error('Error fetching user role:', roleError);
+          setFormErrors({
+            general: 'An error occurred while checking user role'
+          });
+          return;
+        }
 
         if (roleData.user_role !== userType) {
           setFormErrors({
-            general: `Invalid account type. Please use the ${userType} login page.`
+            general: `This account is registered as a ${roleData.user_role}. Please use the correct login form.`
           });
           return;
         }
