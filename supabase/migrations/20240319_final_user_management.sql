@@ -2,9 +2,11 @@
 drop trigger if exists sync_user_metadata on auth.users;
 drop trigger if exists on_auth_user_created on auth.users;
 drop trigger if exists create_user_role on auth.users;
-drop function if exists sync_user_metadata();
+drop function if exists sync_user_metadata() cascade;
 drop function if exists handle_user_creation();
 drop function if exists handle_user_role();
+drop function if exists get_functions() cascade;
+drop function if exists get_triggers() cascade;
 
 -- Drop old tables
 drop table if exists user_role;
@@ -91,6 +93,40 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure handle_user_creation();
 
+-- Create sync_user_metadata function
+create or replace function sync_user_metadata()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  -- For inserts and updates
+  if (tg_op = 'UPDATE') then
+    -- Update users table
+    update public.users
+    set
+      email = new.email,
+      full_name = coalesce(
+        new.raw_user_meta_data->>'full_name',
+        split_part(new.email, '@', 1)
+      ),
+      updated_at = now()
+    where id = new.id;
+  end if;
+
+  return new;
+exception
+  when others then
+    raise log 'Error in sync_user_metadata(): %', SQLERRM;
+    return new;
+end;
+$$;
+
+-- Create trigger to sync metadata changes
+create trigger sync_user_metadata
+  after update on auth.users
+  for each row execute procedure sync_user_metadata();
+
 -- Enable RLS
 alter table public.users enable row level security;
 
@@ -126,44 +162,4 @@ grant select, update on public.users to authenticated;
 grant usage on all sequences in schema public to postgres, service_role, anon, authenticated;
 
 -- Ensure the trigger function has proper permissions
-alter function handle_user_creation() security definer;
-
--- Helper functions for debugging
-create or replace function get_functions()
-returns table (
-  function_name text,
-  function_args text,
-  return_type text,
-  function_body text
-) language sql security definer as $$
-  SELECT 
-    p.proname::text as function_name,
-    pg_get_function_arguments(p.oid)::text as function_args,
-    pg_get_function_result(p.oid)::text as return_type,
-    pg_get_functiondef(p.oid)::text as function_body
-  FROM pg_proc p
-  JOIN pg_namespace n ON p.pronamespace = n.oid
-  WHERE n.nspname = 'public';
-$$;
-
-create or replace function get_triggers()
-returns table (
-  trigger_name text,
-  table_name text,
-  function_name text,
-  trigger_type text
-) language sql security definer as $$
-  SELECT 
-    t.tgname::text as trigger_name,
-    c.relname::text as table_name,
-    p.proname::text as function_name,
-    pg_get_triggerdef(t.oid)::text as trigger_type
-  FROM pg_trigger t
-  JOIN pg_class c ON t.tgrelid = c.oid
-  JOIN pg_proc p ON t.tgfoid = p.oid
-  WHERE NOT t.tgisinternal;
-$$;
-
--- Grant access to the helper functions
-grant execute on function get_functions to anon, authenticated;
-grant execute on function get_triggers to anon, authenticated; 
+alter function handle_user_creation() security definer; 
