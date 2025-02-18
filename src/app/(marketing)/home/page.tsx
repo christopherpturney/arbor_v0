@@ -107,7 +107,7 @@ export default function Home() {
           <p className="mb-2">hello@arbordesignadvice.com</p>
           <p className="mb-4">P.O. Box 3002</p>
           <p>Chapel Hill, NC. USA</p>
-          <p className="mt-8 text-sm">Arbor Design Advice, LLC. All Rights Reserved. Est. 2024</p>
+          <p className="mt-8 text-sm">© Arbor Design Advice, LLC. All Rights Reserved. Est. 2024</p>
         </div>
       </footer>
     </main>
