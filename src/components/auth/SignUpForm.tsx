@@ -27,20 +27,19 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
 
     try {
       // Check if user already exists in users table
-      const { data: existingUser, error: userCheckError } = await supabase
+      const { data: existingUsers, error: userCheckError } = await supabase
         .from('users')
         .select('id')
-        .eq('email', email)
-        .single();
+        .eq('email', email);
 
-      if (userCheckError && !userCheckError.message.includes('no rows')) {
+      if (userCheckError) {
         console.error('Error checking existing user:', userCheckError);
         setError('An error occurred. Please try again.');
         setLoading(false);
         return;
       }
 
-      if (existingUser) {
+      if (existingUsers && existingUsers.length > 0) {
         setError('This email is already registered. Please log in instead.');
         setLoading(false);
         return;
