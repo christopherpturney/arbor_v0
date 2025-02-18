@@ -18,6 +18,7 @@ export default function AppLayout({
   const [user, setUser] = useState<User | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Get user type from metadata
   const userType = user?.user_metadata?.user_type || 'homeowner';
@@ -27,28 +28,35 @@ export default function AppLayout({
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
-      if (authUser) {
-        // Fetch user data from our custom users table
-        const { data: userData, error } = await supabase
-          .from('users')
-          .select('full_name, email')
-          .eq('id', authUser.id)
-          .single();
+      try {
+        setIsLoading(true);
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        
+        if (authUser) {
+          // Fetch user data from our custom users table
+          const { data: userData, error } = await supabase
+            .from('users')
+            .select('full_name, email')
+            .eq('id', authUser.id)
+            .single();
 
-        if (!error && userData) {
-          setUser({
-            ...authUser,
-            user_metadata: {
-              ...authUser.user_metadata,
-              full_name: userData.full_name
-            }
-          });
-        } else {
-          console.error('Error fetching user data:', error);
-          setUser(authUser);
+          if (!error && userData) {
+            setUser({
+              ...authUser,
+              user_metadata: {
+                ...authUser.user_metadata,
+                full_name: userData.full_name
+              }
+            });
+          } else {
+            console.error('Error fetching user data:', error);
+            setUser(authUser);
+          }
         }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     getUser();
@@ -192,7 +200,11 @@ export default function AppLayout({
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   <div className="w-8 rounded-full bg-primary text-primary-content flex items-center justify-center">
-                    <span className="text-base font-medium leading-[2]">{userInitial}</span>
+                    {isLoading ? (
+                      <span className="loading loading-spinner loading-xs"></span>
+                    ) : (
+                      <span className="text-base font-medium leading-[2]">{userInitial}</span>
+                    )}
                   </div>
                 </div>
                 {isDropdownOpen && (
