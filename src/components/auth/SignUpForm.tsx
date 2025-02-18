@@ -45,7 +45,9 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
             full_name: fullName,
             user_type: userType,
           },
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || location.origin}/auth/callback`,
+          emailRedirectTo: process.env.NODE_ENV === 'production' 
+            ? 'https://arbor-v0.vercel.app/auth/callback'
+            : `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
         }
       });
 
