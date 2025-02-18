@@ -88,7 +88,7 @@ export default function LoginPage({ userType }: LoginPageProps) {
           </form>
 
           <p className="text-center mt-8">
-            Don&apos;t have an account?{' '}&apos;
+            Don&apos;t have an account?{' '}
             <Link href={`/auth/${roleText}/signup`} className="link link-primary">
               Sign up
             </Link>
