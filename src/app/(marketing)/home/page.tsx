@@ -39,13 +39,13 @@ export default function Home() {
             <div>
               <h3 className="text-xl mb-4">The Question</h3>
               <p className="text-neutral/80">
-                This homeowner had questions about seating for their family&apos;s dining area.
+                This homeowner needed help selecting the perfect dining set that would comfortably seat their family of six while fitting their modern farmhouse style.
               </p>
             </div>
             <div>
               <h3 className="text-xl mb-4">The Session</h3>
               <p className="text-neutral/80">
-                Our expert designer provided detailed recommendations and product links.
+                Our expert designer provided detailed recommendations for table sizes, chair styles, and specific product links that matched their style and budget.
               </p>
             </div>
           </div>
