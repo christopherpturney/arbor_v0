@@ -199,15 +199,15 @@ export default function AppLayout({
                   className="btn btn-ghost btn-circle avatar"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  <div className="w-8 rounded-full bg-primary text-primary-content flex items-center justify-center">
-                    {isLoading ? (
-                      <span className="loading loading-spinner loading-xs"></span>
-                    ) : (
+                  {isLoading ? (
+                    <div className="skeleton w-8 h-8 rounded-full bg-base-200"></div>
+                  ) : (
+                    <div className="w-8 rounded-full bg-primary text-primary-content flex items-center justify-center">
                       <span className="text-base font-medium leading-[2]">{userInitial}</span>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
-                {isDropdownOpen && (
+                {isDropdownOpen && !isLoading && (
                   <ul 
                     tabIndex={0} 
                     className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-72"
