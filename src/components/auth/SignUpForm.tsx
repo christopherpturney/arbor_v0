@@ -37,6 +37,13 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
     try {
       console.log('Attempting signup with:', { email, fullName, userType }); // Debug log
 
+      const enableEmailConfirmation = process.env.NEXT_PUBLIC_ENABLE_EMAIL_CONFIRMATION === 'true';
+      const redirectTo = enableEmailConfirmation
+        ? process.env.NODE_ENV === 'production'
+          ? 'https://arbor-v0.vercel.app/auth/callback'
+          : `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`
+        : undefined;
+
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -45,9 +52,7 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
             full_name: fullName,
             user_type: userType,
           },
-          emailRedirectTo: process.env.NODE_ENV === 'production' 
-            ? 'https://arbor-v0.vercel.app/auth/callback'
-            : `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+          emailRedirectTo: redirectTo,
         }
       });
 
@@ -58,7 +63,12 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
       }
 
       if (authData.user) {
-        router.push('/auth/verify-email');
+        if (enableEmailConfirmation) {
+          router.push('/auth/verify-email');
+        } else {
+          // If email confirmation is disabled, user is automatically signed in
+          router.push(`/dashboard/${userType}`);
+        }
       } else {
         throw new Error('No user data returned from signup');
       }
