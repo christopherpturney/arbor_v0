@@ -109,12 +109,8 @@ async function compareSchemas() {
     // Check tables in both environments
     console.log('\n--- Checking Tables ---');
     await checkTable(devClient, 'users', 'Development');
-    await checkTable(devClient, 'user_roles', 'Development');
-    await checkTable(devClient, 'user_role', 'Development');
 
     await checkTable(prodClient, 'users', 'Production');
-    await checkTable(prodClient, 'user_roles', 'Production');
-    await checkTable(prodClient, 'user_role', 'Production');
 
   } catch (error) {
     console.error('Error:', error);

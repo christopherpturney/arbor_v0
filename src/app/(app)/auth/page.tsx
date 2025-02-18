@@ -16,14 +16,14 @@ export default function AuthPage() {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        // Get user type from metadata or fetch from user_role table
-        const { data: roleData } = await supabase
-          .from('user_role')
+        // Get user type from users table
+        const { data: userData } = await supabase
+          .from('users')
           .select('user_role')
-          .eq('user_id', user.id)
+          .eq('id', user.id)
           .single();
 
-        const userType = roleData?.user_role || user.user_metadata?.user_type || 'homeowner';
+        const userType = userData?.user_role || user.user_metadata?.user_type || 'homeowner';
         router.replace(`/dashboard/${userType}`);
       }
     };
