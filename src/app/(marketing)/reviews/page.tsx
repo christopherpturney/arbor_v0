@@ -65,7 +65,7 @@ export default function Reviews() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-charcoal/90 italic mb-4">"{review.text}"</p>
+                  <p className="text-charcoal/90 italic mb-4">&quot;{review.text}&quot;</p>
                 </div>
                 <div className="mt-auto">
                   <div className="border-t border-sage/20 pt-4">

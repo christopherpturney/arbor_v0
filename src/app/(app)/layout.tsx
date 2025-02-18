@@ -1,9 +1,9 @@
 'use client';
 
-import "./globals.css";
+import "./app.css";
 import Link from "next/link";
 import Image from "next/image";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient, User } from '@supabase/auth-helpers-nextjs';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -15,7 +15,7 @@ export default function AppLayout({
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClientComponentClient();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
@@ -38,7 +38,6 @@ export default function AppLayout({
           .single();
 
         if (!error && userData) {
-          // Use the data from our users table as the source of truth
           setUser({
             ...authUser,
             user_metadata: {
@@ -251,7 +250,7 @@ export default function AppLayout({
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 overflow-y-auto bg-base-200 p-4 lg:p-6">
+          <main className="flex-1 overflow-y-auto">
             {children}
           </main>
         </div>

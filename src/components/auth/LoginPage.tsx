@@ -88,10 +88,14 @@ export default function LoginPage({ userType }: LoginPageProps) {
           </form>
 
           <p className="text-center mt-8">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}&apos;
             <Link href={`/auth/${roleText}/signup`} className="link link-primary">
               Sign up
             </Link>
+          </p>
+
+          <p className="text-lg text-charcoal/70">
+            We&apos;ll help you find the perfect designer for your space.
           </p>
         </div>
       </div>

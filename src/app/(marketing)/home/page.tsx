@@ -39,7 +39,7 @@ export default function Home() {
             <div>
               <h3 className="text-xl mb-4">The Question</h3>
               <p className="text-neutral/80">
-                This homeowner had questions about seating for their family's dining area.
+                This homeowner had questions about seating for their family&apos;s dining area.
               </p>
             </div>
             <div>

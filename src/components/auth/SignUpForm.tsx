@@ -3,29 +3,22 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { AuthError } from '@supabase/supabase-js';
 
 interface SignUpFormProps {
   userType: 'homeowner' | 'designer';
 }
 
-interface FormErrors {
-  name?: string;
-  email?: string;
-  password?: string;
-}
-
 export default function SignUpForm({ userType }: SignUpFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const router = useRouter();
   const supabase = createClientComponentClient();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    setError(null);
-    setFormErrors({});
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
@@ -54,7 +47,7 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
       }
 
       // Sign up the user
-      const { error: signUpError, data } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -62,56 +55,17 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
             full_name: fullName,
             user_type: userType,
           },
-        },
+          emailRedirectTo: `${location.origin}/auth/callback`,
+        }
       });
 
-      if (signUpError) {
-        console.error('Sign up error:', signUpError);
-        setError(signUpError.message);
-        setLoading(false);
-        return;
-      }
+      if (signUpError) throw signUpError;
 
-      if (!data.user) {
-        setError('Failed to create account. Please try again.');
-        setLoading(false);
-        return;
-      }
-
-      // Wait for triggers to complete
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Verify user role was created
-      const { data: userRole, error: roleError } = await supabase
-        .from('user_role')
-        .select('user_role')
-        .eq('user_id', data.user.id)
-        .single();
-
-      if (roleError) {
-        console.error('Error verifying user role:', roleError);
-        // Check if user exists in users table
-        const { data: userData, error: userDataError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('id', data.user.id)
-          .single();
-
-        if (userDataError) {
-          console.error('Error checking user data:', userDataError);
-        }
-
-        setError('Account created but role assignment failed. Please contact support.');
-        setLoading(false);
-        return;
-      }
-
-      // Redirect to dashboard
-      router.push(`/dashboard/${userType}`);
-      router.refresh();
-    } catch (err: any) {
-      console.error('Unexpected error during sign up:', err);
-      setError('An unexpected error occurred. Please try again.');
+      router.push('/auth/verify-email');
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+      setError(authError.message);
+    } finally {
       setLoading(false);
     }
   };
@@ -120,6 +74,5 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
     handleSubmit,
     loading,
     error,
-    formErrors,
   };
 } 

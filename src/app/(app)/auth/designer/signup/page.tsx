@@ -1,13 +1,11 @@
 'use client';
 
 import Link from "next/link";
-import { useState } from "react";
 import SignUpForm from "@/components/auth/SignUpForm";
 import AuthNavigation from "@/components/auth/AuthNavigation";
 
 export default function DesignerSignUp() {
-  const [error, setError] = useState<string | null>(null);
-  const { handleSubmit, loading, error: formError, formErrors } = SignUpForm({ userType: 'designer' });
+  const { handleSubmit, loading, error } = SignUpForm({ userType: 'designer' });
 
   return (
     <div className="min-h-screen bg-base-100">
@@ -19,14 +17,14 @@ export default function DesignerSignUp() {
             <p className="text-charcoal/70">Share your expertise and earn by providing design advice</p>
           </div>
 
-          {(error || formError) && (
+          {error && (
             <div className="alert alert-error mb-6">
               <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="font-medium">{error || formError}</p>
-                {(error || formError)?.toLowerCase().includes('already registered') && (
+                <p className="font-medium">{error}</p>
+                {error.toLowerCase().includes('already registered') && (
                   <p className="text-sm mt-1">
                     Please <Link href="/auth/designer/login" className="underline">log in</Link> instead
                   </p>
@@ -44,14 +42,9 @@ export default function DesignerSignUp() {
                 type="text"
                 id="name"
                 name="name"
-                className={`input input-bordered w-full ${formErrors.name ? 'input-error' : ''}`}
+                className="input input-bordered w-full"
                 required
               />
-              {formErrors.name && (
-                <label className="label">
-                  <span className="label-text-alt text-error">{formErrors.name}</span>
-                </label>
-              )}
             </div>
 
             <div className="form-control">
@@ -62,14 +55,9 @@ export default function DesignerSignUp() {
                 type="email"
                 id="email"
                 name="email"
-                className={`input input-bordered w-full ${formErrors.email ? 'input-error' : ''}`}
+                className="input input-bordered w-full"
                 required
               />
-              {formErrors.email && (
-                <label className="label">
-                  <span className="label-text-alt text-error">{formErrors.email}</span>
-                </label>
-              )}
             </div>
 
             <div className="form-control">
@@ -80,14 +68,9 @@ export default function DesignerSignUp() {
                 type="password"
                 id="password"
                 name="password"
-                className={`input input-bordered w-full ${formErrors.password ? 'input-error' : ''}`}
+                className="input input-bordered w-full"
                 required
               />
-              {formErrors.password && (
-                <label className="label">
-                  <span className="label-text-alt text-error">{formErrors.password}</span>
-                </label>
-              )}
             </div>
 
             <button 

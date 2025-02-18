@@ -32,6 +32,14 @@
 
 @layer components {
   /* Custom Navigation Styles */
+  .navbar-start {
+    @apply w-[30%] !important;
+  }
+
+  .navbar-end {
+    @apply w-[70%] !important;
+  }
+
   .nav-link {
     @apply text-charcoal hover:text-sage transition-colors duration-200 text-[1rem] tracking-wide font-medium bg-transparent !important;
   }

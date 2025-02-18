@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 const benefits = [
@@ -38,13 +37,6 @@ const benefits = [
       </svg>
     )
   }
-];
-
-const requirements = [
-  "Professional design experience",
-  "Strong communication skills",
-  "Portfolio of completed projects",
-  "Passion for helping others create beautiful spaces"
 ];
 
 export default function Designers() {

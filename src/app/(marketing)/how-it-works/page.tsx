@@ -1,9 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-
 export default function HowItWorks() {
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="container mx-auto px-4 py-16">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24">
         {/* Hero Section */}
         <div className="text-center mb-16">
@@ -30,7 +27,7 @@ export default function HowItWorks() {
             </div>
             <h3 className="text-xl mb-3">Get Matched</h3>
             <p className="text-charcoal/80">
-              We'll pair you with an expert designer who specializes in your style and project type.
+              We&apos;ll pair you with an expert designer who specializes in your style and project type.
             </p>
           </div>
           <div className="text-center">
@@ -51,28 +48,28 @@ export default function HowItWorks() {
             <div className="bg-soft-white p-8 rounded-lg">
               <h3 className="text-xl mb-4 text-antique-gold">Space Planning</h3>
               <p className="text-charcoal/80 mb-4">
-                "Looking to make updates to the bedroom on a budget. Perhaps arranging furniture in a different way, a new carpet and new bedding."
+                &quot;Looking to make updates to the bedroom on a budget. Perhaps arranging furniture in a different way, a new carpet and new bedding.&quot;
               </p>
               <p className="text-sage italic">Style: Farmhouse, Boho, Clean designs</p>
             </div>
             <div className="bg-soft-white p-8 rounded-lg">
               <h3 className="text-xl mb-4 text-antique-gold">Hardware Selection</h3>
               <p className="text-charcoal/80 mb-4">
-                "Need advice about hardware for a powder bathroom, have wallpaper and vanity but want expert advice on complementary hardware."
+                &quot;Need advice about hardware for a powder bathroom, have wallpaper and vanity but want expert advice on complementary hardware.&quot;
               </p>
               <p className="text-sage italic">Style: Traditional, Elegant, European</p>
             </div>
             <div className="bg-soft-white p-8 rounded-lg">
               <h3 className="text-xl mb-4 text-antique-gold">Paint & Color</h3>
               <p className="text-charcoal/80 mb-4">
-                "Need help selecting paint colors for living room built-ins and guidance on what portions should be painted."
+                &quot;Need help selecting paint colors for living room built-ins and guidance on what portions should be painted.&quot;
               </p>
               <p className="text-sage italic">Style: Modern Farmhouse, Traditional, Coastal</p>
             </div>
             <div className="bg-soft-white p-8 rounded-lg">
               <h3 className="text-xl mb-4 text-antique-gold">Furniture & Decor</h3>
               <p className="text-charcoal/80 mb-4">
-                "Looking for a functional sideboard within budget. Need help navigating options and finding the right piece."
+                &quot;Looking for a functional sideboard within budget. Need help navigating options and finding the right piece.&quot;
               </p>
               <p className="text-sage italic">Style: Modern Farmhouse, Traditional, Coastal</p>
             </div>
