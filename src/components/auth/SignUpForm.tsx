@@ -33,8 +33,13 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
         .eq('email', email);
 
       if (userCheckError) {
-        console.error('Error checking existing user:', userCheckError);
-        setError('An error occurred. Please try again.');
+        console.error('Error checking existing user:', {
+          error: userCheckError,
+          details: userCheckError.details,
+          hint: userCheckError.hint,
+          code: userCheckError.code
+        });
+        setError('An error occurred during signup. Please try again.');
         setLoading(false);
         return;
       }
@@ -54,16 +59,29 @@ export default function SignUpForm({ userType }: SignUpFormProps) {
             full_name: fullName,
             user_type: userType,
           },
-          emailRedirectTo: `${location.origin}/auth/callback`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || location.origin}/auth/callback`,
         }
       });
 
-      if (signUpError) throw signUpError;
+      if (signUpError) {
+        console.error('Signup error:', {
+          error: signUpError,
+          name: signUpError.name,
+          message: signUpError.message,
+          stack: signUpError.stack
+        });
+        throw signUpError;
+      }
 
       router.push('/auth/verify-email');
     } catch (error: unknown) {
-      const authError = error as AuthError;
-      setError(authError.message);
+      console.error('Unhandled signup error:', {
+        error,
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      setError('An error occurred during signup. Please try again.');
     } finally {
       setLoading(false);
     }
